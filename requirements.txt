@@ -1,8 +1,7 @@
 scikit-learn
 pandas
 numpy
-matplotlib
-seaborn
-joblib
 flask
 flask-cors
+joblib
+gunicorn
