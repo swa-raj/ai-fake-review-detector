@@ -11,7 +11,9 @@
     "https://www.amazon.in/*",
     "https://www.amazon.com/*",
     "https://www.flipkart.com/*",
-    "https://www.meesho.com/*"
+    "https://www.meesho.com/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
   ],
   "action": {
     "default_popup": "popup.html",
