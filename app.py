@@ -175,4 +175,4 @@ if __name__ == '__main__':
     print("   POST /analyze   → Single review")
     print("   POST /analyze-bulk → Multiple reviews")
     print("="*50 + "\n")
-app.run(debug=True, port=8080)
+app.run(host='0.0.0.0', port=10000, debug=False)
