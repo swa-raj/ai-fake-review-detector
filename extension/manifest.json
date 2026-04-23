@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "AI Fake Review Detector",
+  "version": "1.0",
+  "description": "Detects fake reviews on Amazon and Flipkart using AI",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.amazon.in/*",
+    "https://www.amazon.com/*",
+    "https://www.flipkart.com/*",
+    "https://www.meesho.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.amazon.in/*",
+        "https://www.amazon.com/*",
+        "https://www.flipkart.com/*",
+        "https://www.meesho.com/*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
+}
