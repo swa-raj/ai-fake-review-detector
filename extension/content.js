@@ -4,7 +4,7 @@
 // Scrapes reviews and sends to Flask API
 // ============================================
 
-const API_URL = "http://localhost:8080";
+const API_URL = "https://ai-fake-review-detector-7kh1.onrender.com";
 
 // ============================================
 // STEP 1: Scrape reviews from the page

@@ -1,3 +1,5 @@
+const API_URL = "https://ai-fake-review-detector-7kh1.onrender.com";
+
 async function analyze() {
   const btn = document.getElementById('analyzeBtn');
   const status = document.getElementById('status');
@@ -8,38 +10,33 @@ async function analyze() {
   status.textContent = 'Scanning reviews...';
   result.style.display = 'none';
 
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  // Get the active tab
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    const results = await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: async () => {
+  // Inject a script that scrapes AND calls API AND returns result
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: (apiUrl) => {
+      return new Promise((resolve) => {
         const reviews = [];
         document.querySelectorAll('[data-hook="review-body"] span').forEach(el => {
           const text = el.innerText?.trim();
           if (text && text.length > 20) reviews.push(text);
         });
-
-        if (reviews.length === 0) return { error: 'No reviews found on this page' };
-
-        try {
-          const response = await fetch('http://localhost:8080/analyze-bulk', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ reviews: reviews.slice(0, 20) })
-          });
-          return await response.json();
-        } catch (e) {
-          return { error: 'API not reachable: ' + e.message };
-        }
-      }
-    });
-
+        if (reviews.length === 0) { resolve({ error: 'No reviews found' }); return; }
+        fetch(apiUrl + '/analyze-bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reviews: reviews.slice(0, 20) })
+        }).then(r => r.json()).then(resolve).catch(e => resolve({ error: e.message }));
+      });
+    },
+    args: [API_URL]
+  }).then(results => {
     btn.disabled = false;
     btn.textContent = '🔍 Analyze Reviews';
 
     const data = results[0].result;
-
     if (!data || data.error) {
       status.textContent = '⚠️ ' + (data?.error || 'Something went wrong');
       return;
@@ -58,10 +55,10 @@ async function analyze() {
 
     status.textContent = '✅ Analysis complete!';
     result.style.display = 'block';
-
-  } catch (err) {
+  }).catch(err => {
     btn.disabled = false;
     btn.textContent = '🔍 Analyze Reviews';
-    status.textContent = '❌ Error: ' + err.message;
-  }
+    status.textContent = '❌ ' + err.message;
+  });
 }
+document.getElementById('analyzeBtn').addEventListener('click', analyze);
